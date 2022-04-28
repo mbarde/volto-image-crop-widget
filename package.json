@@ -1,0 +1,21 @@
+{
+  "name": "volto-image-crop-widget",
+  "version": "0.1.0",
+  "description": "Volto add-on: Extends Voltos FileWidget to be able to crop images in-place.",
+  "main": "src/index.js",
+  "license": "MIT",
+  "keywords": [
+    "volto-addon",
+    "volto",
+    "plone",
+    "react",
+    "react-image-crop"
+  ],
+  "scripts": {
+    "i18n": "rm -rf build/messages && NODE_ENV=production i18n --addon"
+  },
+  "dependencies": {
+    "@plone/scripts": "*",
+    "react-image-crop": "10.0.0"
+  }
+}
