@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: \n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: messages
+# defaultMessage: Apply
+msgid "Apply"
+msgstr "Anwenden"
+
+#: messages
+# defaultMessage: Cancel
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: messages
+# defaultMessage: Crop image
+msgid "Crop image"
+msgstr "Bild zuschneiden"
+
+#: messages
+# defaultMessage: Undo cropping
+msgid "Undo cropping"
+msgstr "Zuschnitt rückgängig"

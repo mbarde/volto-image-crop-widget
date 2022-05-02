@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { Button, Modal } from 'semantic-ui-react';
 // eslint-disable-next-line import/no-unresolved
 import FileWidgetOrig from '@plone/volto-original/components/manage/Widgets/FileWidget';
@@ -9,13 +10,14 @@ import cropSVG from '@plone/volto/icons/cut.svg';
 import undoSVG from '@plone/volto/icons/undo.svg';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import messages from '@mbarde/volto-image-crop-widget/messages';
 import './style.less';
 
 function getCropAsBase64(image, pixelCrop) {
   /* crop selection is in image element dimensions, but the original image
      could be bigger (here: natural* vs. client*), we need to scale crop
      selection accordingly
-     (https://stackoverflow.com/a/52274005)
+     (based on: https://stackoverflow.com/a/52274005)
   */
   const fx = image.naturalWidth / image.clientWidth;
   const fy = image.naturalHeight / image.clientHeight;
@@ -47,6 +49,7 @@ function getCropAsBase64(image, pixelCrop) {
 
 const FileWidget = (props) => {
   const { id, value, onChange } = props;
+  const intl = useIntl();
   const imgRef = useRef(null);
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,10 +89,10 @@ const FileWidget = (props) => {
           <Button
             className="btn-undo-crop"
             onClick={onUndoCrop}
-            title="Undo cropping"
+            title={intl.formatMessage(messages.undoCropping)}
           >
             <Icon name={undoSVG} size="20px" />
-            <span>Undo cropping</span>
+            <span>{intl.formatMessage(messages.undoCropping)}</span>
           </Button>
         )}
         {imgsrc && (
@@ -98,18 +101,20 @@ const FileWidget = (props) => {
             trigger={
               <Button
                 className="btn-crop"
-                title="Crop image"
+                title={intl.formatMessage(messages.cropImage)}
                 onClick={(evt) => evt.preventDefault()}
               >
                 <Icon name={cropSVG} size="20px"></Icon>
-                <span>Crop image</span>
+                <span>{intl.formatMessage(messages.cropImage)}</span>
               </Button>
             }
             onClose={() => setModalOpen(false)}
             onOpen={() => setModalOpen(true)}
             open={modalOpen}
           >
-            <Modal.Header>Crop image</Modal.Header>
+            <Modal.Header>
+              {intl.formatMessage(messages.cropImage)}
+            </Modal.Header>
             <Modal.Content image>
               <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
                 <img src={imgsrc} ref={imgRef} alt="to crop" />
@@ -117,10 +122,11 @@ const FileWidget = (props) => {
             </Modal.Content>
             <Modal.Actions>
               <Button onClick={() => setModalOpen(false)} negative>
-                Cancel
+                {intl.formatMessage(messages.cancel)}
               </Button>
               <Button icon onClick={applyCrop} positive>
-                Apply <Icon name={checkSVG} size="14px" />
+                {intl.formatMessage(messages.apply)}{' '}
+                <Icon name={checkSVG} size="14px" />
               </Button>
             </Modal.Actions>
           </Modal>

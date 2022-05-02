@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2021-01-29T12:34:47.097Z\n"
+"POT-Creation-Date: 2022-05-02T14:10:29.475Z\n"
 "Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -12,3 +12,23 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8\n"
 "Domain: volto\n"
+
+#: messages
+# defaultMessage: Apply
+msgid "Apply"
+msgstr ""
+
+#: messages
+# defaultMessage: Cancel
+msgid "Cancel"
+msgstr ""
+
+#: messages
+# defaultMessage: Crop image
+msgid "Crop image"
+msgstr ""
+
+#: messages
+# defaultMessage: Undo cropping
+msgid "Undo cropping"
+msgstr ""
