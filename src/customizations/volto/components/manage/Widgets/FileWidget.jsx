@@ -81,42 +81,51 @@ const FileWidget = (props) => {
 
   return (
     <div className="field-wrapper-image-container">
-      {value?.history && (
-        <Button className="btn-undo-crop" onClick={onUndoCrop}>
-          <Icon name={undoSVG} size="20px" /> Undo cropping
-        </Button>
-      )}
-      {imgsrc && (
-        <Modal
-          size="fullscreen"
-          trigger={
-            <Button
-              className="btn-crop"
-              onClick={(evt) => evt.preventDefault()}
-            >
-              <Icon name={cropSVG} size="20px"></Icon> Crop image
-            </Button>
-          }
-          onClose={() => setModalOpen(false)}
-          onOpen={() => setModalOpen(true)}
-          open={modalOpen}
-        >
-          <Modal.Header>Crop image</Modal.Header>
-          <Modal.Content image>
-            <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
-              <img src={imgsrc} ref={imgRef} alt="to crop" />
-            </ReactCrop>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button onClick={() => setModalOpen(false)} negative>
-              Cancel
-            </Button>
-            <Button icon onClick={applyCrop} positive>
-              Apply <Icon name={checkSVG} size="14px" />
-            </Button>
-          </Modal.Actions>
-        </Modal>
-      )}
+      <div className="btn-wrapper">
+        {value?.history && (
+          <Button
+            className="btn-undo-crop"
+            onClick={onUndoCrop}
+            title="Undo cropping"
+          >
+            <Icon name={undoSVG} size="20px" />
+            <span>Undo cropping</span>
+          </Button>
+        )}
+        {imgsrc && (
+          <Modal
+            size="fullscreen"
+            trigger={
+              <Button
+                className="btn-crop"
+                title="Crop image"
+                onClick={(evt) => evt.preventDefault()}
+              >
+                <Icon name={cropSVG} size="20px"></Icon>
+                <span>Crop image</span>
+              </Button>
+            }
+            onClose={() => setModalOpen(false)}
+            onOpen={() => setModalOpen(true)}
+            open={modalOpen}
+          >
+            <Modal.Header>Crop image</Modal.Header>
+            <Modal.Content image>
+              <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
+                <img src={imgsrc} ref={imgRef} alt="to crop" />
+              </ReactCrop>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button onClick={() => setModalOpen(false)} negative>
+                Cancel
+              </Button>
+              <Button icon onClick={applyCrop} positive>
+                Apply <Icon name={checkSVG} size="14px" />
+              </Button>
+            </Modal.Actions>
+          </Modal>
+        )}
+      </div>
       <FileWidgetOrig {...props} />
     </div>
   );

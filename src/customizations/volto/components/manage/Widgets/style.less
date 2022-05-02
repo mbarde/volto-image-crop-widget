@@ -1,16 +1,42 @@
 .field-wrapper-image-container {
   position: relative;
-  .btn-crop,
-  .btn-undo-crop {
-    bottom: 1em;
+
+  .btn-wrapper {
+    display: flex;
+    flex-direction: column;
     position: absolute;
-    right: 1em;
+    right: 20px;
+    row-gap: 10px;
+    top: 20px;
     z-index: 1;
-    & svg.icon {
+
+    svg.icon {
       margin-bottom: -5px !important;
     }
+
   }
-  .btn-undo-crop {
-    bottom: 4em;
+}
+
+#sidebar .sidebar-container:not(.full-size) {
+
+  .field-wrapper-image-container {
+
+    .btn-wrapper {
+      right: 0;
+
+      .btn-crop,
+      .btn-undo-crop {
+        padding: 10px;
+
+        span {
+          display: none;
+        }
+
+        svg {
+          margin-right: 0;
+        }
+
+      }
+    }
   }
 }
