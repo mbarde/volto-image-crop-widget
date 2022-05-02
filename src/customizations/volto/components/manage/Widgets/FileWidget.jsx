@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button, Modal } from 'semantic-ui-react';
 // eslint-disable-next-line import/no-unresolved
@@ -12,6 +12,16 @@ import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import messages from '@mbarde/volto-image-crop-widget/messages';
 import './style.less';
+
+/* from original FileWidget */
+const imageMimetypes = [
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/jpg',
+  'image/gif',
+  'image/svg+xml',
+];
 
 function getCropAsBase64(image, pixelCrop) {
   /* crop selection is in image element dimensions, but the original image
@@ -53,6 +63,15 @@ const FileWidget = (props) => {
   const imgRef = useRef(null);
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
+  const [isImage, setIsImage] = useState(false);
+
+  useEffect(() => {
+    if (value && imageMimetypes.includes(value['content-type'])) {
+      setIsImage(true);
+    }
+  }, [value]);
+  /* no need for our fancy new cropping options if file is not an image */
+  if (!isImage) return <FileWidgetOrig {...props} />;
 
   const imgsrc = value?.download
     ? flattenToAppURL(value?.download) + '?id=' + Date.now()
