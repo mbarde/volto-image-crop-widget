@@ -5,10 +5,11 @@ import { Button, Modal } from 'semantic-ui-react';
 import FileWidgetOrig from '@plone/volto-original/components/manage/Widgets/FileWidget';
 import { Icon } from '@plone/volto/components';
 import { flattenToAppURL } from '@plone/volto/helpers';
+import config from '@plone/volto/registry';
 import checkSVG from '@plone/volto/icons/check.svg';
 import cropSVG from '@plone/volto/icons/cut.svg';
 import undoSVG from '@plone/volto/icons/undo.svg';
-import ReactCrop from 'react-image-crop';
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import messages from '@mbarde/volto-image-crop-widget/messages';
 import './style.less';
@@ -61,6 +62,7 @@ const FileWidget = (props) => {
   const { id, value, onChange } = props;
   const intl = useIntl();
   const imgRef = useRef(null);
+  const [curAspectRatio, setCurAspectRatio] = useState(false);
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
   const [isImage, setIsImage] = useState(false);
@@ -101,6 +103,39 @@ const FileWidget = (props) => {
     setModalOpen(false);
   };
 
+  const initCrop = (newAspect) => {
+    if (newAspect === false) {
+      setCurAspectRatio(false);
+      // setCrop();
+      return;
+    }
+
+    if (imgRef?.current) {
+      const { naturalWidth: width, naturalHeight: height } = imgRef.current;
+
+      const crop = centerCrop(
+        makeAspectCrop(
+          {
+            // You don't need to pass a complete crop into
+            // makeAspectCrop or centerCrop.
+            unit: '%',
+            width: 50,
+          },
+          newAspect,
+          width,
+          height,
+        ),
+        width,
+        height,
+      );
+
+      setCurAspectRatio(newAspect);
+      setCrop(crop);
+    }
+  };
+
+  const aspectRatios = config.settings.image_crop_apect_ratios || [];
+
   return (
     <div className="field-wrapper-image-container">
       <div className="btn-wrapper">
@@ -135,11 +170,29 @@ const FileWidget = (props) => {
               {intl.formatMessage(messages.cropImage)}
             </Modal.Header>
             <Modal.Content image>
-              <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
+              <ReactCrop
+                crop={crop}
+                onChange={(c) => setCrop(c)}
+                aspect={curAspectRatio}
+              >
                 <img src={imgsrc} ref={imgRef} alt="to crop" />
               </ReactCrop>
             </Modal.Content>
             <Modal.Actions>
+              {aspectRatios.map((aspect) => {
+                const isActive = aspect.ratio === curAspectRatio;
+                return (
+                  <Button
+                    active={isActive}
+                    onClick={() => {
+                      if (isActive) initCrop(false);
+                      else initCrop(aspect.ratio);
+                    }}
+                  >
+                    {aspect.label}
+                  </Button>
+                );
+              })}
               <Button onClick={() => setModalOpen(false)} negative>
                 {intl.formatMessage(messages.cancel)}
               </Button>

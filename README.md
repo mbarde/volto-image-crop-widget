@@ -46,3 +46,28 @@ Users do not have to know & use external tools when they want to crop images.
    ```
 
 4. Go to http://localhost:3000
+
+
+## Configuration
+
+### Enable and define aspect crops:
+
+```Javascript
+export default function applyConfig(config) {
+  config.settings.image_crop_apect_ratios = [
+    {
+      label: '16:9',
+      ratio: 16 / 9,
+    },
+    {
+      label: '4:3',
+      ratio: 4 / 3,
+    },
+    {
+      label: '1:1',
+      ratio: 1,
+    },
+  ];
+  return config;
+}
+```
