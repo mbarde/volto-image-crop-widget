@@ -1,6 +1,6 @@
 {
   "name": "@mbarde/volto-image-crop-widget",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Volto add-on: Extends Voltos FileWidget to be able to crop images in-place.",
   "main": "src/index.js",
   "license": "MIT",
