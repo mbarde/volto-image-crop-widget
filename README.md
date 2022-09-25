@@ -54,7 +54,7 @@ Users do not have to know & use external tools when they want to crop images.
 
 ```Javascript
 export default function applyConfig(config) {
-  config.settings.image_crop_apect_ratios = [
+  config.settings.image_crop_aspect_ratios = [
     {
       label: '16:9',
       ratio: 16 / 9,

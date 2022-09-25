@@ -134,7 +134,9 @@ const FileWidget = (props) => {
     }
   };
 
-  const aspectRatios = config.settings.image_crop_apect_ratios || [];
+  const aspectRatios = config.settings.image_crop_aspect_ratios ||
+    config.settings.image_crop_apect_ratios || // keep typo for compatibility
+    [];
 
   return (
     <div className="field-wrapper-image-container">
