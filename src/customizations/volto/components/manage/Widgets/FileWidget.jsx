@@ -8,7 +8,9 @@ import { flattenToAppURL } from '@plone/volto/helpers';
 import config from '@plone/volto/registry';
 import checkSVG from '@plone/volto/icons/check.svg';
 import cropSVG from '@plone/volto/icons/cut.svg';
+import horizontalSVG from '@plone/volto/icons/horizontal.svg';
 import undoSVG from '@plone/volto/icons/undo.svg';
+import verticalSVG from '@plone/volto/icons/vertical.svg';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import messages from '@mbarde/volto-image-crop-widget/messages';
@@ -23,6 +25,29 @@ const imageMimetypes = [
   'image/gif',
   'image/svg+xml',
 ];
+
+function flipImage(image, horizontally) {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+
+  const scaleH = horizontally ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+    scaleV = horizontally ? 1 : -1, // Set verical scale to -1 if flip vertical
+    posX = horizontally ? width * -1 : 0, // Set x position to -100% if flip horizontal
+    posY = horizontally ? 0 : height * -1; // Set y position to -100% if flip vertical
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+
+  ctx.save(); // Save the current state
+  ctx.scale(scaleH, scaleV); // Set scale to flip the image
+  ctx.drawImage(image, posX, posY, width, height); // draw the image
+  ctx.restore(); // Restore the last saved state
+
+  const base64Image = canvas.toDataURL('image/jpeg');
+  return base64Image;
+}
 
 function getCropAsBase64(image, pixelCrop) {
   /* crop selection is in image element dimensions, but the original image
@@ -72,41 +97,51 @@ const FileWidget = (props) => {
       setIsImage(true);
     }
   }, [value]);
-  /* no need for our fancy new cropping options if file is not an image */
-  if (!isImage) return <FileWidgetOrig {...props} />;
 
   const imgsrc = value?.download
     ? flattenToAppURL(value?.download) + '?id=' + Date.now()
     : null || value?.data
     ? `data:${value['content-type']};${value.encoding},${value.data}`
     : null;
+  const [imgSrc, setImgSrc] = useState(imgsrc);
+
+  /* no need for our fancy new cropping options if file is not an image */
+  if (!isImage) return <FileWidgetOrig {...props} />;
 
   const onUndoCrop = (evt) => {
     onChange(id, value.history);
     evt.preventDefault();
   };
 
-  const applyCrop = (evt) => {
-    const data = getCropAsBase64(imgRef.current, crop, 'cropped.jpg').replace(
-      'data:image/jpeg;base64,',
-      '',
-    );
+  const applyChanges = (evt) => {
     onChange(id, {
-      data: data,
+      data: imgSrc.replace('data:image/jpeg;base64,', ''),
       encoding: 'base64',
       'content-type': 'image/jpeg',
-      filename: value?.filename || 'cropped.jpeg',
+      filename: value?.filename || 'changed.jpeg',
       history: value,
     });
-    setCrop();
     evt.preventDefault();
     setModalOpen(false);
+  };
+
+  const onFlip = (evt, horizontal) => {
+    const data = flipImage(imgRef.current, horizontal);
+    setImgSrc(data);
+    setCrop();
+    evt.preventDefault();
+  };
+
+  const onCrop = (evt) => {
+    const data = getCropAsBase64(imgRef.current, crop);
+    setImgSrc(data);
+    setCrop();
+    evt.preventDefault();
   };
 
   const initCrop = (newAspect) => {
     if (newAspect === false) {
       setCurAspectRatio(false);
-      // setCrop();
       return;
     }
 
@@ -134,7 +169,8 @@ const FileWidget = (props) => {
     }
   };
 
-  const aspectRatios = config.settings.image_crop_aspect_ratios ||
+  const aspectRatios =
+    config.settings.image_crop_aspect_ratios ||
     config.settings.image_crop_apect_ratios || // keep typo for compatibility
     [];
 
@@ -177,14 +213,31 @@ const FileWidget = (props) => {
                 onChange={(c) => setCrop(c)}
                 aspect={curAspectRatio}
               >
-                <img src={imgsrc} ref={imgRef} alt="to crop" />
+                <img src={imgSrc} ref={imgRef} alt="to crop" />
               </ReactCrop>
             </Modal.Content>
             <Modal.Actions>
-              {aspectRatios.map((aspect) => {
+              <Button
+                onClick={(evt) => {
+                  onFlip(evt, true);
+                }}
+                aria-label={intl.formatMessage(messages.flipHorizontally)}
+              >
+                <Icon name={horizontalSVG} size="14px" />
+              </Button>
+              <Button
+                onClick={(evt) => {
+                  onFlip(evt, false);
+                }}
+                aria-label={intl.formatMessage(messages.flipVertically)}
+              >
+                <Icon name={verticalSVG} size="14px" />
+              </Button>
+              {aspectRatios.map((aspect, index) => {
                 const isActive = aspect.ratio === curAspectRatio;
                 return (
                   <Button
+                    key={`ratio-${index}`}
                     active={isActive}
                     onClick={() => {
                       if (isActive) initCrop(false);
@@ -195,10 +248,10 @@ const FileWidget = (props) => {
                   </Button>
                 );
               })}
-              <Button onClick={() => setModalOpen(false)} negative>
-                {intl.formatMessage(messages.cancel)}
+              <Button icon onClick={onCrop} disabled={!crop}>
+                {intl.formatMessage(messages.crop)}
               </Button>
-              <Button icon onClick={applyCrop} positive>
+              <Button onClick={applyChanges} positive>
                 {intl.formatMessage(messages.apply)}{' '}
                 <Icon name={checkSVG} size="14px" />
               </Button>

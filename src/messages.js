@@ -13,12 +13,20 @@ export default defineMessages({
     id: 'Undo cropping',
     defaultMessage: 'Undo cropping',
   },
-  cancel: {
-    id: 'Cancel',
-    defaultMessage: 'Cancel',
+  crop: {
+    id: 'Crop',
+    defaultMessage: 'Crop',
   },
   apply: {
     id: 'Apply',
     defaultMessage: 'Apply',
+  },
+  flipHorizontally: {
+    id: 'Flip horizontally',
+    defaultMessage: 'Flip horizontally',
+  },
+  flipVertically: {
+    id: 'Flip vertically',
+    defaultMessage: 'Flip vertically',
   },
 });
