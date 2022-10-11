@@ -17,9 +17,9 @@ msgid "Apply"
 msgstr "Anwenden"
 
 #: messages
-# defaultMessage: Cancel
-msgid "Cancel"
-msgstr "Abbrechen"
+# defaultMessage: Crop
+msgid "Crop"
+msgstr "Zuschneiden"
 
 #: messages
 # defaultMessage: Crop image
@@ -27,6 +27,16 @@ msgid "Crop image"
 msgstr "Bild zuschneiden"
 
 #: messages
-# defaultMessage: Undo cropping
-msgid "Undo cropping"
-msgstr "Zuschnitt rückgängig"
+# defaultMessage: Flip horizontally
+msgid "Flip horizontally"
+msgstr "Horizontal spiegeln"
+
+#: messages
+# defaultMessage: Flip vertically
+msgid "Flip vertically"
+msgstr "Vertikal spiegeln"
+
+#: messages
+# defaultMessage: Undo
+msgid "Undo"
+msgstr "Rückgängig"

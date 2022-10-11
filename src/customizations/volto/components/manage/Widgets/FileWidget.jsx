@@ -8,7 +8,9 @@ import { flattenToAppURL } from '@plone/volto/helpers';
 import config from '@plone/volto/registry';
 import checkSVG from '@plone/volto/icons/check.svg';
 import cropSVG from '@plone/volto/icons/cut.svg';
+import horizontalSVG from '@plone/volto/icons/horizontal.svg';
 import undoSVG from '@plone/volto/icons/undo.svg';
+import verticalSVG from '@plone/volto/icons/vertical.svg';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import messages from '@mbarde/volto-image-crop-widget/messages';
@@ -23,6 +25,29 @@ const imageMimetypes = [
   'image/gif',
   'image/svg+xml',
 ];
+
+function flipImage(image, horizontally) {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+
+  const scaleH = horizontally ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+    scaleV = horizontally ? 1 : -1, // Set verical scale to -1 if flip vertical
+    posX = horizontally ? width * -1 : 0, // Set x position to -100% if flip horizontal
+    posY = horizontally ? 0 : height * -1; // Set y position to -100% if flip vertical
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+
+  ctx.save(); // Save the current state
+  ctx.scale(scaleH, scaleV); // Set scale to flip the image
+  ctx.drawImage(image, posX, posY, width, height); // draw the image
+  ctx.restore(); // Restore the last saved state
+
+  const base64Image = canvas.toDataURL('image/jpeg');
+  return base64Image;
+}
 
 function getCropAsBase64(image, pixelCrop) {
   /* crop selection is in image element dimensions, but the original image
@@ -66,47 +91,66 @@ const FileWidget = (props) => {
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
   const [isImage, setIsImage] = useState(false);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     if (value && imageMimetypes.includes(value['content-type'])) {
       setIsImage(true);
     }
-  }, [value]);
+    /* when a new image has been uploaded
+       value.download does not exist yet */
+    const imgsrc = value?.download
+      ? flattenToAppURL(value?.download) + '?id=' + Date.now()
+      : value?.data
+      ? `data:${value['content-type']};${value.encoding},${value.data}`
+      : null;
+    setImgSrc(imgsrc);
+  }, [value, value?.download, value?.data]);
+
+  const [imgSrc, setImgSrc] = useState(null);
+
   /* no need for our fancy new cropping options if file is not an image */
   if (!isImage) return <FileWidgetOrig {...props} />;
 
-  const imgsrc = value?.download
-    ? flattenToAppURL(value?.download) + '?id=' + Date.now()
-    : null || value?.data
-    ? `data:${value['content-type']};${value.encoding},${value.data}`
-    : null;
-
-  const onUndoCrop = (evt) => {
-    onChange(id, value.history);
+  const onUndo = (evt) => {
+    if (history.length > 0) {
+      setImgSrc(history[0]);
+      setHistory(history.slice(1));
+    }
     evt.preventDefault();
   };
 
-  const applyCrop = (evt) => {
-    const data = getCropAsBase64(imgRef.current, crop, 'cropped.jpg').replace(
-      'data:image/jpeg;base64,',
-      '',
-    );
+  const applyChanges = (evt) => {
     onChange(id, {
-      data: data,
+      data: imgSrc.replace('data:image/jpeg;base64,', ''),
       encoding: 'base64',
       'content-type': 'image/jpeg',
-      filename: value?.filename || 'cropped.jpeg',
+      filename: value?.filename || 'changed.jpeg',
       history: value,
     });
-    setCrop();
     evt.preventDefault();
     setModalOpen(false);
+  };
+
+  const onFlip = (evt, horizontal) => {
+    setHistory((history) => [imgSrc, ...history]);
+    const data = flipImage(imgRef.current, horizontal);
+    setImgSrc(data);
+    setCrop();
+    evt.preventDefault();
+  };
+
+  const onCrop = (evt) => {
+    setHistory((history) => [imgSrc, ...history]);
+    const data = getCropAsBase64(imgRef.current, crop);
+    setImgSrc(data);
+    setCrop();
+    evt.preventDefault();
   };
 
   const initCrop = (newAspect) => {
     if (newAspect === false) {
       setCurAspectRatio(false);
-      // setCrop();
       return;
     }
 
@@ -134,25 +178,17 @@ const FileWidget = (props) => {
     }
   };
 
-  const aspectRatios = config.settings.image_crop_aspect_ratios ||
+  const aspectRatios =
+    config.settings.image_crop_aspect_ratios ||
     config.settings.image_crop_apect_ratios || // keep typo for compatibility
     [];
 
   return (
     <div className="field-wrapper-image-container">
       <div className="btn-wrapper">
-        {value?.history && (
-          <Button
-            className="btn-undo-crop"
-            onClick={onUndoCrop}
-            title={intl.formatMessage(messages.undoCropping)}
-          >
-            <Icon name={undoSVG} size="20px" />
-            <span>{intl.formatMessage(messages.undoCropping)}</span>
-          </Button>
-        )}
-        {imgsrc && (
+        {imgSrc && (
           <Modal
+            closeIcon
             size="fullscreen"
             trigger={
               <Button
@@ -177,14 +213,35 @@ const FileWidget = (props) => {
                 onChange={(c) => setCrop(c)}
                 aspect={curAspectRatio}
               >
-                <img src={imgsrc} ref={imgRef} alt="to crop" />
+                <img src={imgSrc} ref={imgRef} alt="to crop" />
               </ReactCrop>
             </Modal.Content>
             <Modal.Actions>
-              {aspectRatios.map((aspect) => {
+              <Button
+                icon
+                onClick={(evt) => {
+                  onFlip(evt, true);
+                }}
+                title={intl.formatMessage(messages.flipHorizontally)}
+                aria-label={intl.formatMessage(messages.flipHorizontally)}
+              >
+                <Icon name={horizontalSVG} size="14px" />
+              </Button>
+              <Button
+                icon
+                onClick={(evt) => {
+                  onFlip(evt, false);
+                }}
+                title={intl.formatMessage(messages.flipVertically)}
+                aria-label={intl.formatMessage(messages.flipVertically)}
+              >
+                <Icon name={verticalSVG} size="14px" />
+              </Button>
+              {aspectRatios.map((aspect, index) => {
                 const isActive = aspect.ratio === curAspectRatio;
                 return (
                   <Button
+                    key={`ratio-${index}`}
                     active={isActive}
                     onClick={() => {
                       if (isActive) initCrop(false);
@@ -195,12 +252,30 @@ const FileWidget = (props) => {
                   </Button>
                 );
               })}
-              <Button onClick={() => setModalOpen(false)} negative>
-                {intl.formatMessage(messages.cancel)}
+              {history && history.length > 0 && (
+                <Button
+                  icon
+                  className="btn-undo"
+                  onClick={onUndo}
+                  title={intl.formatMessage(messages.undo)}
+                  secondary
+                >
+                  <Icon name={undoSVG} size="14px" />
+                  <span>{intl.formatMessage(messages.undo)}</span>
+                </Button>
+              )}
+              <Button icon onClick={onCrop} disabled={!crop} positive>
+                <Icon name={cropSVG} size="14px"></Icon>{' '}
+                {intl.formatMessage(messages.crop)}
               </Button>
-              <Button icon onClick={applyCrop} positive>
-                {intl.formatMessage(messages.apply)}{' '}
-                <Icon name={checkSVG} size="14px" />
+              <Button
+                icon
+                onClick={applyChanges}
+                disabled={history.length === 0}
+                positive
+              >
+                <Icon name={checkSVG} size="14px" />{' '}
+                {intl.formatMessage(messages.apply)}
               </Button>
             </Modal.Actions>
           </Modal>

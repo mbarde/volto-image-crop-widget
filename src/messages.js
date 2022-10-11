@@ -9,16 +9,24 @@ export default defineMessages({
     id: 'Crop image',
     defaultMessage: 'Crop image',
   },
-  undoCropping: {
-    id: 'Undo cropping',
-    defaultMessage: 'Undo cropping',
+  undo: {
+    id: 'Undo',
+    defaultMessage: 'Undo',
   },
-  cancel: {
-    id: 'Cancel',
-    defaultMessage: 'Cancel',
+  crop: {
+    id: 'Crop',
+    defaultMessage: 'Crop',
   },
   apply: {
     id: 'Apply',
     defaultMessage: 'Apply',
+  },
+  flipHorizontally: {
+    id: 'Flip horizontally',
+    defaultMessage: 'Flip horizontally',
+  },
+  flipVertically: {
+    id: 'Flip vertically',
+    defaultMessage: 'Flip vertically',
   },
 });
