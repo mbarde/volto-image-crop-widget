@@ -97,14 +97,17 @@ const FileWidget = (props) => {
     if (value && imageMimetypes.includes(value['content-type'])) {
       setIsImage(true);
     }
-  }, [value]);
+    /* when a new image has been uploaded
+       value.download does not exist yet */
+    const imgsrc = value?.download
+      ? flattenToAppURL(value?.download) + '?id=' + Date.now()
+      : value?.data
+      ? `data:${value['content-type']};${value.encoding},${value.data}`
+      : null;
+    setImgSrc(imgsrc);
+  }, [value, value?.download, value?.data]);
 
-  const imgsrc = value?.download
-    ? flattenToAppURL(value?.download) + '?id=' + Date.now()
-    : null || value?.data
-    ? `data:${value['content-type']};${value.encoding},${value.data}`
-    : null;
-  const [imgSrc, setImgSrc] = useState(imgsrc);
+  const [imgSrc, setImgSrc] = useState(null);
 
   /* no need for our fancy new cropping options if file is not an image */
   if (!isImage) return <FileWidgetOrig {...props} />;
@@ -183,7 +186,7 @@ const FileWidget = (props) => {
   return (
     <div className="field-wrapper-image-container">
       <div className="btn-wrapper">
-        {imgsrc && (
+        {imgSrc && (
           <Modal
             closeIcon
             size="fullscreen"
