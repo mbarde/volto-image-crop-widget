@@ -91,6 +91,7 @@ const FileWidget = (props) => {
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
   const [isImage, setIsImage] = useState(false);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     if (value && imageMimetypes.includes(value['content-type'])) {
@@ -108,8 +109,11 @@ const FileWidget = (props) => {
   /* no need for our fancy new cropping options if file is not an image */
   if (!isImage) return <FileWidgetOrig {...props} />;
 
-  const onUndoCrop = (evt) => {
-    onChange(id, value.history);
+  const onUndo = (evt) => {
+    if (history.length > 0) {
+      setImgSrc(history[0]);
+      setHistory(history.slice(1));
+    }
     evt.preventDefault();
   };
 
@@ -126,6 +130,7 @@ const FileWidget = (props) => {
   };
 
   const onFlip = (evt, horizontal) => {
+    setHistory((history) => [imgSrc, ...history]);
     const data = flipImage(imgRef.current, horizontal);
     setImgSrc(data);
     setCrop();
@@ -133,6 +138,7 @@ const FileWidget = (props) => {
   };
 
   const onCrop = (evt) => {
+    setHistory((history) => [imgSrc, ...history]);
     const data = getCropAsBase64(imgRef.current, crop);
     setImgSrc(data);
     setCrop();
@@ -177,18 +183,9 @@ const FileWidget = (props) => {
   return (
     <div className="field-wrapper-image-container">
       <div className="btn-wrapper">
-        {value?.history && (
-          <Button
-            className="btn-undo-crop"
-            onClick={onUndoCrop}
-            title={intl.formatMessage(messages.undoCropping)}
-          >
-            <Icon name={undoSVG} size="20px" />
-            <span>{intl.formatMessage(messages.undoCropping)}</span>
-          </Button>
-        )}
         {imgsrc && (
           <Modal
+            closeIcon
             size="fullscreen"
             trigger={
               <Button
@@ -218,17 +215,21 @@ const FileWidget = (props) => {
             </Modal.Content>
             <Modal.Actions>
               <Button
+                icon
                 onClick={(evt) => {
                   onFlip(evt, true);
                 }}
+                title={intl.formatMessage(messages.flipHorizontally)}
                 aria-label={intl.formatMessage(messages.flipHorizontally)}
               >
                 <Icon name={horizontalSVG} size="14px" />
               </Button>
               <Button
+                icon
                 onClick={(evt) => {
                   onFlip(evt, false);
                 }}
+                title={intl.formatMessage(messages.flipVertically)}
                 aria-label={intl.formatMessage(messages.flipVertically)}
               >
                 <Icon name={verticalSVG} size="14px" />
@@ -248,12 +249,30 @@ const FileWidget = (props) => {
                   </Button>
                 );
               })}
-              <Button icon onClick={onCrop} disabled={!crop}>
+              {history && history.length > 0 && (
+                <Button
+                  icon
+                  className="btn-undo"
+                  onClick={onUndo}
+                  title={intl.formatMessage(messages.undo)}
+                  secondary
+                >
+                  <Icon name={undoSVG} size="14px" />
+                  <span>{intl.formatMessage(messages.undo)}</span>
+                </Button>
+              )}
+              <Button icon onClick={onCrop} disabled={!crop} positive>
+                <Icon name={cropSVG} size="14px"></Icon>{' '}
                 {intl.formatMessage(messages.crop)}
               </Button>
-              <Button onClick={applyChanges} positive>
-                {intl.formatMessage(messages.apply)}{' '}
-                <Icon name={checkSVG} size="14px" />
+              <Button
+                icon
+                onClick={applyChanges}
+                disabled={history.length === 0}
+                positive
+              >
+                <Icon name={checkSVG} size="14px" />{' '}
+                {intl.formatMessage(messages.apply)}
               </Button>
             </Modal.Actions>
           </Modal>

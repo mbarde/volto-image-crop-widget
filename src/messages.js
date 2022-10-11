@@ -9,9 +9,9 @@ export default defineMessages({
     id: 'Crop image',
     defaultMessage: 'Crop image',
   },
-  undoCropping: {
-    id: 'Undo cropping',
-    defaultMessage: 'Undo cropping',
+  undo: {
+    id: 'Undo',
+    defaultMessage: 'Undo',
   },
   crop: {
     id: 'Crop',
