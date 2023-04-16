@@ -105,6 +105,7 @@ const FileWidget = (props) => {
       ? `data:${value['content-type']};${value.encoding},${value.data}`
       : null;
     setImgSrc(imgsrc);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [value, value?.download, value?.data]);
 
   const [imgSrc, setImgSrc] = useState(null);
