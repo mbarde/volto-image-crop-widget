@@ -207,6 +207,7 @@ const FileWidget = (props) => {
       <div className="btn-wrapper">
         {imgSrc && (
           <Modal
+            className="modal-image-crop"
             closeIcon
             size="fullscreen"
             trigger={
@@ -246,6 +247,18 @@ const FileWidget = (props) => {
               </ReactCrop>
             </Modal.Content>
             <Modal.Actions>
+              {history && history.length > 0 && (
+                <Button
+                  icon
+                  className="btn-undo"
+                  onClick={onUndo}
+                  title={intl.formatMessage(messages.undo)}
+                  secondary
+                >
+                  <Icon name={undoSVG} size="14px" />
+                  <span>{intl.formatMessage(messages.undo)}</span>
+                </Button>
+              )}
               <Button.Group>
                 <Button
                   icon="plus"
@@ -264,26 +277,28 @@ const FileWidget = (props) => {
                   aria-label={intl.formatMessage(messages.darken)}
                 />
               </Button.Group>
-              <Button
-                icon
-                onClick={(evt) => {
-                  onFlip(evt, true);
-                }}
-                title={intl.formatMessage(messages.flipHorizontally)}
-                aria-label={intl.formatMessage(messages.flipHorizontally)}
-              >
-                <Icon name={horizontalSVG} size="14px" />
-              </Button>
-              <Button
-                icon
-                onClick={(evt) => {
-                  onFlip(evt, false);
-                }}
-                title={intl.formatMessage(messages.flipVertically)}
-                aria-label={intl.formatMessage(messages.flipVertically)}
-              >
-                <Icon name={verticalSVG} size="14px" />
-              </Button>
+              <Button.Group>
+                <Button
+                  icon
+                  onClick={(evt) => {
+                    onFlip(evt, true);
+                  }}
+                  title={intl.formatMessage(messages.flipHorizontally)}
+                  aria-label={intl.formatMessage(messages.flipHorizontally)}
+                >
+                  <Icon name={horizontalSVG} size="14px" />
+                </Button>
+                <Button
+                  icon
+                  onClick={(evt) => {
+                    onFlip(evt, false);
+                  }}
+                  title={intl.formatMessage(messages.flipVertically)}
+                  aria-label={intl.formatMessage(messages.flipVertically)}
+                >
+                  <Icon name={verticalSVG} size="14px" />
+                </Button>
+              </Button.Group>
               {aspectRatios.map((aspect, index) => {
                 const isActive = aspect.ratio === curAspectRatio;
                 return (
@@ -299,18 +314,6 @@ const FileWidget = (props) => {
                   </Button>
                 );
               })}
-              {history && history.length > 0 && (
-                <Button
-                  icon
-                  className="btn-undo"
-                  onClick={onUndo}
-                  title={intl.formatMessage(messages.undo)}
-                  secondary
-                >
-                  <Icon name={undoSVG} size="14px" />
-                  <span>{intl.formatMessage(messages.undo)}</span>
-                </Button>
-              )}
               <Button icon onClick={onCrop} disabled={!crop} positive>
                 <Icon name={cropSVG} size="14px"></Icon>{' '}
                 {intl.formatMessage(messages.crop)}
