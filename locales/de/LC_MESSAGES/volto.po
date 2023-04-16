@@ -27,6 +27,11 @@ msgid "Crop image"
 msgstr "Bild zuschneiden"
 
 #: messages
+# defaultMessage: Darken
+msgid "Darken"
+msgstr "Verdunkeln"
+
+#: messages
 # defaultMessage: Flip horizontally
 msgid "Flip horizontally"
 msgstr "Horizontal spiegeln"
@@ -35,6 +40,11 @@ msgstr "Horizontal spiegeln"
 # defaultMessage: Flip vertically
 msgid "Flip vertically"
 msgstr "Vertikal spiegeln"
+
+#: messages
+# defaultMessage: Lighten
+msgid "Lighten"
+msgstr "Aufhellen"
 
 #: messages
 # defaultMessage: Undo

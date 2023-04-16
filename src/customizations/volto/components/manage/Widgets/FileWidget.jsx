@@ -252,16 +252,16 @@ const FileWidget = (props) => {
                   onClick={() => {
                     setBrightness(brightness + 10);
                   }}
-                  title={'Lighten'}
-                  aria-label={'Lighten'}
+                  title={intl.formatMessage(messages.lighten)}
+                  aria-label={intl.formatMessage(messages.lighten)}
                 />
                 <Button
                   icon="minus"
                   onClick={() => {
                     setBrightness(brightness - 10);
                   }}
-                  title={'Darken'}
-                  aria-label={'Darken'}
+                  title={intl.formatMessage(messages.darken)}
+                  aria-label={intl.formatMessage(messages.darken)}
                 />
               </Button.Group>
               <Button
