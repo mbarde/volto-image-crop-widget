@@ -26,6 +26,19 @@ const imageMimetypes = [
   'image/svg+xml',
 ];
 
+function adjustImageBrightness(image, brightnessValue) {
+  const canvas = document.createElement('canvas');
+  canvas.height = image.naturalHeight;
+  canvas.width = image.naturalWidth;
+  const ctx = canvas.getContext('2d');
+
+  ctx.filter = `brightness(${brightnessValue}%)`;
+  ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight);
+
+  const base64Image = canvas.toDataURL('image/jpeg');
+  return base64Image;
+}
+
 function flipImage(image, horizontally) {
   const width = image.naturalWidth;
   const height = image.naturalHeight;
@@ -92,6 +105,7 @@ const FileWidget = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isImage, setIsImage] = useState(false);
   const [history, setHistory] = useState([]);
+  const [brightness, setBrightness] = useState(100); // in %
 
   useEffect(() => {
     if (value && imageMimetypes.includes(value['content-type'])) {
@@ -122,8 +136,12 @@ const FileWidget = (props) => {
   };
 
   const applyChanges = (evt) => {
+    const data =
+      brightness === 100
+        ? imgSrc
+        : adjustImageBrightness(imgRef.current, brightness);
     onChange(id, {
-      data: imgSrc.replace('data:image/jpeg;base64,', ''),
+      data: data.replace('data:image/jpeg;base64,', ''),
       encoding: 'base64',
       'content-type': 'image/jpeg',
       filename: value?.filename || 'changed.jpeg',
@@ -214,10 +232,38 @@ const FileWidget = (props) => {
                 onChange={(c) => setCrop(c)}
                 aspect={curAspectRatio}
               >
-                <img src={imgSrc} ref={imgRef} alt="to crop" />
+                <img
+                  /* Modifying `imgSrc` directly when brightness changes,
+                     could easily result in data loss on extreme bright
+                     or dark values. Instead we visualize these changes
+                     only via CSS and compute actual data only on apply.
+                  */
+                  style={{ filter: `brightness(${brightness}%)` }}
+                  src={imgSrc}
+                  ref={imgRef}
+                  alt="to crop"
+                />
               </ReactCrop>
             </Modal.Content>
             <Modal.Actions>
+              <Button.Group>
+                <Button
+                  icon="plus"
+                  onClick={() => {
+                    setBrightness(brightness + 10);
+                  }}
+                  title={'Lighten'}
+                  aria-label={'Lighten'}
+                />
+                <Button
+                  icon="minus"
+                  onClick={() => {
+                    setBrightness(brightness - 10);
+                  }}
+                  title={'Darken'}
+                  aria-label={'Darken'}
+                />
+              </Button.Group>
               <Button
                 icon
                 onClick={(evt) => {
@@ -272,7 +318,7 @@ const FileWidget = (props) => {
               <Button
                 icon
                 onClick={applyChanges}
-                disabled={history.length === 0}
+                disabled={history.length === 0 && brightness === 100}
                 positive
               >
                 <Icon name={checkSVG} size="14px" />{' '}
