@@ -29,6 +29,10 @@ export default defineMessages({
     id: 'Flip vertically',
     defaultMessage: 'Flip vertically',
   },
+  brightness: {
+    id: 'Brightness',
+    defaultMessage: 'Brightness',
+  },
   lighten: {
     id: 'Lighten',
     defaultMessage: 'Lighten',

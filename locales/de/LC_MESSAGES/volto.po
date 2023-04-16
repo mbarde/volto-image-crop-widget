@@ -17,6 +17,11 @@ msgid "Apply"
 msgstr "Anwenden"
 
 #: messages
+# defaultMessage: Brightness
+msgid "Brightness"
+msgstr "Helligkeit"
+
+#: messages
 # defaultMessage: Crop
 msgid "Crop"
 msgstr "Zuschneiden"

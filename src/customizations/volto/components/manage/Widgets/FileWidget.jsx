@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, Modal } from 'semantic-ui-react';
+import { Button, Label, Modal } from 'semantic-ui-react';
 // eslint-disable-next-line import/no-unresolved
 import FileWidgetOrig from '@plone/volto-original/components/manage/Widgets/FileWidget';
 import { Icon } from '@plone/volto/components';
@@ -268,14 +268,23 @@ const FileWidget = (props) => {
                   title={intl.formatMessage(messages.lighten)}
                   aria-label={intl.formatMessage(messages.lighten)}
                 />
-                <Button
-                  icon="minus"
-                  onClick={() => {
-                    setBrightness(brightness - 10);
-                  }}
-                  title={intl.formatMessage(messages.darken)}
-                  aria-label={intl.formatMessage(messages.darken)}
-                />
+                <Button as="div" labelPosition="left">
+                  <Label
+                    className="brightness"
+                    basic
+                    title={intl.formatMessage(messages.brightness)}
+                  >
+                    {brightness + '%'}
+                  </Label>
+                  <Button
+                    icon="minus"
+                    onClick={() => {
+                      setBrightness(brightness - 10);
+                    }}
+                    title={intl.formatMessage(messages.darken)}
+                    aria-label={intl.formatMessage(messages.darken)}
+                  />
+                </Button>
               </Button.Group>
               <Button.Group>
                 <Button
