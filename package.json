@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "@plone/scripts": "*",
-    "react-image-crop": "10.0.0"
+    "react-image-crop": "10.0.9"
   }
 }
