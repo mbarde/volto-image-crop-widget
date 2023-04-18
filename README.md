@@ -8,6 +8,13 @@ Extends built-in FileWidget of [Volto](https://github.com/plone/volto) to be abl
 
 Users do not have to know & use external tools when they want to crop images.
 
+## Features
+
+* Free crop
+* Fixed aspect ratio crop
+* Adjust brighness
+* Flip
+
 ## Setup
 
 ### Add volto-image-crop-widget to your Volto project
