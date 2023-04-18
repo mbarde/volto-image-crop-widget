@@ -52,9 +52,19 @@ msgid "Lighten"
 msgstr "Aufhellen"
 
 #: messages
+# defaultMessage: Understood
+msgid "Understood"
+msgstr "Verstanden"
+
+#: messages
 # defaultMessage: Undo
 msgid "Undo"
 msgstr "Rückgängig"
+
+#: messages
+# defaultMessage: Warning
+msgid "Warning"
+msgstr "Warnung"
 
 #: messages
 # defaultMessage: If you save now, the changes cannot be undone. You should therefore make sure to keep a copy of the original image.

@@ -50,4 +50,8 @@ export default defineMessages({
     defaultMessage:
       'If you save now, the changes cannot be undone. You should therefore make sure to keep a copy of the original image.',
   },
+  understood: {
+    id: 'Understood',
+    defaultMessage: 'Understood',
+  },
 });

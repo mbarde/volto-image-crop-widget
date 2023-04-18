@@ -353,7 +353,11 @@ const FileWidget = (props) => {
                 <p>{intl.formatMessage(messages.hint_save_after_crop)}</p>
               </Modal.Content>
               <Modal.Actions>
-                <Button primary content="Understood" onClick={applyChanges} />
+                <Button
+                  primary
+                  content={intl.formatMessage(messages.understood)}
+                  onClick={applyChanges}
+                />
               </Modal.Actions>
             </Modal>
           </Modal>
