@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Button, Label, Modal } from 'semantic-ui-react';
 // eslint-disable-next-line import/no-unresolved
 import FileWidgetOrig from '@plone/volto-original/components/manage/Widgets/FileWidget';
@@ -11,6 +11,7 @@ import cropSVG from '@plone/volto/icons/cut.svg';
 import horizontalSVG from '@plone/volto/icons/horizontal.svg';
 import undoSVG from '@plone/volto/icons/undo.svg';
 import verticalSVG from '@plone/volto/icons/vertical.svg';
+import warnSVG from '@plone/volto/icons/warning.svg';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import messages from '@mbarde/volto-image-crop-widget/messages';
@@ -103,6 +104,7 @@ const FileWidget = (props) => {
   const [curAspectRatio, setCurAspectRatio] = useState(false);
   const [crop, setCrop] = useState();
   const [modalOpen, setModalOpen] = useState(false);
+  const [warnModalOpen, setWarnModalOpen] = useState(false);
   const [isImage, setIsImage] = useState(false);
   const [history, setHistory] = useState([]);
   const [brightness, setBrightness] = useState(100); // in %
@@ -149,6 +151,7 @@ const FileWidget = (props) => {
     });
     evt.preventDefault();
     setModalOpen(false);
+    setWarnModalOpen(false);
   };
 
   const onFlip = (evt, horizontal) => {
@@ -308,28 +311,32 @@ const FileWidget = (props) => {
                   <Icon name={verticalSVG} size="14px" />
                 </Button>
               </Button.Group>
-              {aspectRatios.map((aspect, index) => {
-                const isActive = aspect.ratio === curAspectRatio;
-                return (
-                  <Button
-                    key={`ratio-${index}`}
-                    active={isActive}
-                    onClick={() => {
-                      if (isActive) initCrop(false);
-                      else initCrop(aspect.ratio);
-                    }}
-                  >
-                    {aspect.label}
-                  </Button>
-                );
-              })}
+              {aspectRatios.length > 0 && (
+                <Button.Group>
+                  {aspectRatios.map((aspect, index) => {
+                    const isActive = aspect.ratio === curAspectRatio;
+                    return (
+                      <Button
+                        key={`ratio-${index}`}
+                        active={isActive}
+                        onClick={() => {
+                          if (isActive) initCrop(false);
+                          else initCrop(aspect.ratio);
+                        }}
+                      >
+                        {aspect.label}
+                      </Button>
+                    );
+                  })}
+                </Button.Group>
+              )}
               <Button icon onClick={onCrop} disabled={!crop} positive>
                 <Icon name={cropSVG} size="14px"></Icon>{' '}
                 {intl.formatMessage(messages.crop)}
               </Button>
               <Button
                 icon
-                onClick={applyChanges}
+                onClick={() => setWarnModalOpen(true)}
                 disabled={history.length === 0 && brightness === 100}
                 positive
               >
@@ -337,6 +344,31 @@ const FileWidget = (props) => {
                 {intl.formatMessage(messages.apply)}
               </Button>
             </Modal.Actions>
+            <Modal
+              onClose={() => setWarnModalOpen(false)}
+              open={warnModalOpen}
+              size="small"
+              centered={true}
+            >
+              <Modal.Header>
+                <Icon
+                  name={warnSVG}
+                  size="24px"
+                  style={{ marginBottom: '-4px' }}
+                />{' '}
+                {intl.formatMessage(messages.warning)}
+              </Modal.Header>
+              <Modal.Content>
+                <p>{intl.formatMessage(messages.hint_save_after_crop)}</p>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button
+                  primary
+                  content={intl.formatMessage(messages.understood)}
+                  onClick={applyChanges}
+                />
+              </Modal.Actions>
+            </Modal>
           </Modal>
         )}
       </div>

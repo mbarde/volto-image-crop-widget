@@ -41,4 +41,17 @@ export default defineMessages({
     id: 'Darken',
     defaultMessage: 'Darken',
   },
+  warning: {
+    id: 'Warning',
+    defaultMessage: 'Warning',
+  },
+  hint_save_after_crop: {
+    id: 'hint_save_after_crop',
+    defaultMessage:
+      'If you save now, the changes cannot be undone. You should therefore make sure to keep a copy of the original image.',
+  },
+  understood: {
+    id: 'Understood',
+    defaultMessage: 'Understood',
+  },
 });
