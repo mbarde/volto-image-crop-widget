@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Button, Label, Modal } from 'semantic-ui-react';
 // eslint-disable-next-line import/no-unresolved
 import FileWidgetOrig from '@plone/volto-original/components/manage/Widgets/FileWidget';
@@ -347,13 +347,10 @@ const FileWidget = (props) => {
               centered={true}
             >
               <Modal.Header>
-                <Icon name={warnSVG} /> Warning
+                <Icon name={warnSVG} /> {intl.formatMessage(messages.warning)}
               </Modal.Header>
               <Modal.Content>
-                <p>
-                  As soon as you hit the save button, you wont be able to undo
-                  any changes!
-                </p>
+                <p>{intl.formatMessage(messages.hint_save_after_crop)}</p>
               </Modal.Content>
               <Modal.Actions>
                 <Button primary content="Understood" onClick={applyChanges} />

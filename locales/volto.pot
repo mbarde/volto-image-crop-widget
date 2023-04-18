@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2023-04-16T20:59:11.471Z\n"
+"POT-Creation-Date: 2023-04-18T09:56:25.474Z\n"
 "Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,11 @@ msgstr ""
 #: messages
 # defaultMessage: Apply
 msgid "Apply"
+msgstr ""
+
+#: messages
+# defaultMessage: Attention
+msgid "Attention"
 msgstr ""
 
 #: messages
@@ -56,4 +61,9 @@ msgstr ""
 #: messages
 # defaultMessage: Undo
 msgid "Undo"
+msgstr ""
+
+#: messages
+# defaultMessage: If you save now, the changes cannot be undone. You should therefore make sure to keep a copy of the original image.
+msgid "hint_save_after_crop"
 msgstr ""

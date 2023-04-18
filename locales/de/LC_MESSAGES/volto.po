@@ -55,3 +55,8 @@ msgstr "Aufhellen"
 # defaultMessage: Undo
 msgid "Undo"
 msgstr "Rückgängig"
+
+#: messages
+# defaultMessage: If you save now, the changes cannot be undone. You should therefore make sure to keep a copy of the original image.
+msgid "hint_save_after_crop"
+msgstr "Wenn Sie jetzt speichern, können die Änderungen nicht mehr rückgängig gemacht werden. Sie sollten daher sicherstellen, dass Sie noch eine Kopie des Originalbildes haben."
