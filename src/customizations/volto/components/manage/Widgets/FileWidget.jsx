@@ -311,21 +311,25 @@ const FileWidget = (props) => {
                   <Icon name={verticalSVG} size="14px" />
                 </Button>
               </Button.Group>
-              {aspectRatios.map((aspect, index) => {
-                const isActive = aspect.ratio === curAspectRatio;
-                return (
-                  <Button
-                    key={`ratio-${index}`}
-                    active={isActive}
-                    onClick={() => {
-                      if (isActive) initCrop(false);
-                      else initCrop(aspect.ratio);
-                    }}
-                  >
-                    {aspect.label}
-                  </Button>
-                );
-              })}
+              {aspectRatios.length > 0 && (
+                <Button.Group>
+                  {aspectRatios.map((aspect, index) => {
+                    const isActive = aspect.ratio === curAspectRatio;
+                    return (
+                      <Button
+                        key={`ratio-${index}`}
+                        active={isActive}
+                        onClick={() => {
+                          if (isActive) initCrop(false);
+                          else initCrop(aspect.ratio);
+                        }}
+                      >
+                        {aspect.label}
+                      </Button>
+                    );
+                  })}
+                </Button.Group>
+              )}
               <Button icon onClick={onCrop} disabled={!crop} positive>
                 <Icon name={cropSVG} size="14px"></Icon>{' '}
                 {intl.formatMessage(messages.crop)}
