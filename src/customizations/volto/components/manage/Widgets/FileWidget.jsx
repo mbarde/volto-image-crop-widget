@@ -351,7 +351,12 @@ const FileWidget = (props) => {
               centered={true}
             >
               <Modal.Header>
-                <Icon name={warnSVG} /> {intl.formatMessage(messages.warning)}
+                <Icon
+                  name={warnSVG}
+                  size="24px"
+                  style={{ marginBottom: '-4px' }}
+                />{' '}
+                {intl.formatMessage(messages.warning)}
               </Modal.Header>
               <Modal.Content>
                 <p>{intl.formatMessage(messages.hint_save_after_crop)}</p>
